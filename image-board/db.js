@@ -5,7 +5,7 @@ const URLSlugs = require('mongoose-url-slugs');
 // schemas
 
 const ImageSchema = new Schema({
-    caption: Stringtring,
+    caption: String,
     url: String
 });
 
@@ -15,12 +15,18 @@ const ImagePostSchema = new Schema({
 });
 
 // slug plugin (schemaName.plugin(URLSlugs('property name')))
-ImageSchema.plugin('caption');
-ImagePostSchema.plugin('title');
+ImageSchema.plugin(URLSlugs('caption'));
+ImagePostSchema.plugin(URLSlugs('title'));
 
 // register the model
-mongoose.model('Image', ImageSchema);
-mongoose.model('ImagePost', ImagePostSchema);
+const Image = mongoose.model('Image', ImageSchema);
+const ImagePost = mongoose.model('ImagePost', ImagePostSchema);
 
 // coonecting to the database
 mongoose.connect('mongodb://localhost/hw06');
+
+module.exports = {
+  Image:Image,
+  ImagePost:ImagePost
+};
+

@@ -20,5 +20,8 @@ app.use(express.static(publicPath));
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // getting the route and using it.
-const route = require('routes/app-routes');
+const route = require('./routes/app-routes');
 app.use('/', route);
+
+
+app.listen(process.env.PORT || 3000);
