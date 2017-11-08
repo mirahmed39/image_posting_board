@@ -29,7 +29,6 @@ router.post('/process-post', function (req, res) {
     const title = req.body.title;
     const imagePost = new ImagePost({title:title});
     const numOfImageUrls = (Object.keys(req.body).length - 1) / 2;
-    console.log("Nubmer of image urls: ", numOfImageUrls);
     for(let imageUrlNumber = 1; imageUrlNumber <= numOfImageUrls; imageUrlNumber++) {
         if (req.body["img"+imageUrlNumber+"url"] !== '') {
             imagePost.images.push({caption: req.body['img'+imageUrlNumber+'caption'],
@@ -37,8 +36,13 @@ router.post('/process-post', function (req, res) {
         }
     }
     imagePost.save(function (err) {
-        if(err) throw console.log(err);
-        res.redirect('/image-posts');
+        if(err) {
+            console.log("An error occured");
+            const errorMessage = "An Image Post must have a Title\n" +
+                "If you are inserting an image, the URL field for that image must be populated.";;
+            res.redirect('/image-posts');
+        } else
+            res.redirect('/image-posts');
     });
 });
 
@@ -56,10 +60,16 @@ router.post('/process-an-image-post', function (req, res) {
     const imageCaption = req.body['imgcaption'];
     const redirectUrlFormat = '/image-posts/' + slugForImagePost;
 
-    ImagePost.findOneAndUpdate({slug:slugForImagePost}, {$push: {images: {caption:imageCaption, url:imageUrl}}}, function(err) {
-        if(err) throw err;
-        console.log("Add operation successfully executed");
-        res.redirect(redirectUrlFormat);
+    ImagePost.findOneAndUpdate({slug:slugForImagePost}, {$push: {images: {caption:imageCaption, url:imageUrl}}}, function(err, anImagePost) {
+        if(err) {
+            console.log("An error occured");
+            const errorMessage = "If you are inserting an image, the URL field for that image must be populated.";
+            //res.render('anImagePost', {errorMessage: errorMessage, anImagePost: anImagePost});
+            res.redirect(redirectUrlFormat, {errorMessage:errorMessage});
+        } else {
+            console.log("Add operation successfully executed");
+            res.redirect(redirectUrlFormat);
+        }
     });
 });
 

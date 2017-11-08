@@ -6,12 +6,12 @@ const URLSlugs = require('mongoose-url-slugs');
 
 const ImageSchema = new Schema({
     caption: String,
-    url: String
+    url: {type: String, required: true},
 });
 
 const ImagePostSchema = new Schema({
-    title: String,
-    images: [ImageSchema]
+    title: {type: String, required: true},
+    images: {type: [ImageSchema], required: true}
 });
 
 // slug plugin (schemaName.plugin(URLSlugs('property name')))

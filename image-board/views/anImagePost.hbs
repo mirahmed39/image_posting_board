@@ -22,6 +22,11 @@
 
 <div class="container jumbotron">
 <h3 class="modify">Add Image to {{anImagePost.title}}</h3>
+
+{{#if errorMessage}}
+    <div class="alert alert-danger">{{errorMesssage}}</div>
+{{/if}}
+
 <form method="POST" action="/process-an-image-post">
     <div class="form-group">
         <label for="imgurl">Image URL:</label>

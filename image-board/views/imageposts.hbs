@@ -1,5 +1,9 @@
 <h1 class="page-heading">Image Post Application</h1>
 <div class="container jumbotron">
+
+{{#if errorMessage}}
+    <div class="alert alert-danger" role="alert">{{errorMesssage}}</div>
+{{/if}}
 <form method="POST" action="/process-post">
     <div class="form-group">
         <label for="title">Image Post Title:</label>
