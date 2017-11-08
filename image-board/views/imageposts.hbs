@@ -1,35 +1,39 @@
-<h1>This is image posts page</h1>
-
-
+<h1 class="page-heading">Image Post Application</h1>
+<div class="container jumbotron">
 <form method="POST" action="/process-post">
     <div class="form-group">
         <label for="title">Image Post Title:</label>
         <input type="text" class="form-control" id="title" name="title" placeholder="Enter title here"> <br>
 
         <label for="img1url">Image 1 URL:</label>
-        <input type="text" class="form-control" id="img1url" name="img1url" placeholder="Image 1 URL">,
+        <input type="text" class="form-control" id="img1url" name="img1url" placeholder="Image 1 URL">
         <label for="img1caption">Caption:</label>
         <input type="text" class="form-control" id="img1caption" name="img1caption" placeholder="Image 1 caption"> <br>
 
         <label for="img2url">Image 2 URL:</label>
-        <input type="text" class="form-control" id="img2url" name="img2url" placeholder="Image 2 URL">,
+        <input type="text" class="form-control" id="img2url" name="img2url" placeholder="Image 2 URL">
         <label for="img2caption">Caption:</label>
         <input type="text" class="form-control" id="img2caption" name="img2caption" placeholder="Image 2 caption"> <br>
 
         <label for="img3url">Image 3 URL:</label>
-        <input type="text" class="form-control" id="img3url" name="img3url" placeholder="Image 3 URL">,
+        <input type="text" class="form-control" id="img3url" name="img3url" placeholder="Image 3 URL">
         <label for="img3caption">Caption:</label>
         <input type="text" class="form-control" id="img3caption" name="img3caption" placeholder="Image 3 caption"> <br>
     </div>
-    <button type="submit" class="btn btn-warning btn-lg">Submit</button>
+    <button type="submit" class="btn btn-info btn-lg">Submit</button>
 </form>
+</div>
 
-{{#each imagePosts as |anImagePost|}}
-    <li><a href="/image-posts/{{anImagePost.slug}}">{{anImagePost.title}}</a></li>
-    {{#each anImagePost.images as |anImage|}}
-        <figure>
-            <figcaption>{{anImage.caption}}</figcaption>
-            <img src="{{anImage.url}}" class="img-fluid">
-        </figure>
-    {{/each}}
-{{/each}}
+<div class="container jumbotron imageposts">
+    <ol>
+        {{#each imagePosts as |anImagePost|}}
+            <li class="list-item"><a href="/image-posts/{{anImagePost.slug}}">{{anImagePost.title}}</a></li>
+            {{#each anImagePost.images as |anImage|}}
+                <figure>
+                    <img src="{{anImage.url}}" class="img-fluid img-thumbnail">
+                    <figcaption>{{anImage.caption}}</figcaption>
+                </figure>
+            {{/each}}
+        {{/each}}
+    </ol>
+</div>

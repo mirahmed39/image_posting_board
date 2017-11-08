@@ -1,22 +1,38 @@
-<h1>{{anImagePost.title}}</h1>
-<p class="lead">Modify the {{anImagePost.title}} page.</p>
+<h1 class="page-heading">{{anImagePost.title}}</h1>
 
+<nav>
+    <a href="/" class="btn btn-info">Back To Image Posts</a>
+</nav>
+
+<p class="lead modify">Modify the {{anImagePost.title}} page.</p>
+
+<div class="container jumbotron">
+<form method="POST" action="/remove-image">
 {{#each anImagePost.images as |anImage|}}
+    <input type="checkbox" name="image-checkbox" value="{{anImage._id}}">
     <figure>
         <figcaption>{{anImage.caption}}</figcaption>
-        <img src="{{anImage.url}}" class="img-fluid">
+        <img src="{{anImage.url}}" class="img-fluid img-thumbnail">
     </figure>
 {{/each}}
+    <input type="hidden" name="img-post-slug" value="{{anImagePost.slug}}">
+    <button type="submit" class="btn btn-danger btn-lg">Delete Checked Images</button>
+</form>
+</div>
 
-
-<h3>Add Image to {{anImagePost.title}}</h3>
+<div class="container jumbotron">
+<h3 class="modify">Add Image to {{anImagePost.title}}</h3>
 <form method="POST" action="/process-an-image-post">
     <div class="form-group">
         <label for="imgurl">Image URL:</label>
-        <input type="text" class="form-control" id="imgurl" name="imgurl" placeholder="Image URL">,
+        <input type="text" class="form-control" id="imgurl" name="imgurl" placeholder="Image URL">
         <label for="imgcaption">Caption:</label>
         <input type="text" class="form-control" id="imgcaption" name="imgcaption" placeholder="Image caption"> <br>
         <input type="hidden" name="img-post-slug" value="{{anImagePost.slug}}">
     </div>
-    <button type="submit" class="btn btn-warning btn-lg">Add Another One</button>
+    <button type="submit" class="btn btn-info btn-lg">Add Another One</button>
+    <nav>
+        <a href="/">Back To Image Posts</a>
+    </nav>
 </form>
+</div>

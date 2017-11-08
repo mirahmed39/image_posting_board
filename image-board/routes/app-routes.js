@@ -3,6 +3,10 @@ const router = express.Router();
 const db = require('../db');
 const ImagePost = db.ImagePost;
 
+router.get('/', function (req, res) {
+    res.redirect('/image-posts');
+});
+
 router.get('/image-posts', function (req, res) {
     /*
     Need to retrieve all the image posts from the database. and for each image post,
@@ -28,15 +32,12 @@ router.post('/process-post', function (req, res) {
     console.log("Nubmer of image urls: ", numOfImageUrls);
     for(let imageUrlNumber = 1; imageUrlNumber <= numOfImageUrls; imageUrlNumber++) {
         if (req.body["img"+imageUrlNumber+"url"] !== '') {
-            //console.log("Image url number: ", "img"+imageUrlNumber+"url");
             imagePost.images.push({caption: req.body['img'+imageUrlNumber+'caption'],
                                     url: req.body['img'+imageUrlNumber+'url']});
         }
     }
-    //console.log('ImagePost:', imagePost);
-    imagePost.save(function (err, imagePost) {
+    imagePost.save(function (err) {
         if(err) throw console.log(err);
-        console.log("These are the images inside the image post:",imagePost);
         res.redirect('/image-posts');
     });
 });
@@ -45,7 +46,6 @@ router.get('/image-posts/:slug', function (req, res) {
     const slugForImagePost = req.params['slug'];
     ImagePost.findOne({slug: slugForImagePost}, function (err, anImagePost) {
         if (err) throw err;
-        console.log("Image post requested:", anImagePost);
         res.render('anImagePost', {anImagePost: anImagePost});
     });
 });
@@ -55,14 +55,34 @@ router.post('/process-an-image-post', function (req, res) {
     const imageUrl = req.body['imgurl'];
     const imageCaption = req.body['imgcaption'];
     const redirectUrlFormat = '/image-posts/' + slugForImagePost;
-    console.log("Image post slug:",slugForImagePost);
-    console.log("Image url:",imageUrl);
-    console.log("Image post caption:",imageCaption);
 
-    ImagePost.findOneAndUpdate({slug:slugForImagePost}, {$push: {images: {caption:imageCaption, url:imageUrl}}}, function(err, anImagePost, count) {
-        console.log("This is updated:", anImagePost);
+    ImagePost.findOneAndUpdate({slug:slugForImagePost}, {$push: {images: {caption:imageCaption, url:imageUrl}}}, function(err) {
+        if(err) throw err;
+        console.log("Add operation successfully executed");
         res.redirect(redirectUrlFormat);
     });
+});
+
+router.post('/remove-image', function (req, res) {
+    const slugForImagePost = req.body['img-post-slug'];
+    const checkedImages = req.body['image-checkbox'];
+    const redirectUrlFormat = '/image-posts/' + slugForImagePost;
+    // check to see if the uses has selected multiple images.
+    if(Array.isArray(checkedImages)) {
+        for(let imageId of checkedImages) {
+            ImagePost.findOneAndUpdate({slug: slugForImagePost}, {$pull: {images: {_id: imageId}}} , function (err) {
+                if(err) throw err;
+                console.log("Remove operation successfully executed");
+            });
+        }
+        res.redirect(redirectUrlFormat);
+    } else {
+        ImagePost.findOneAndUpdate({slug: slugForImagePost}, {$pull: {images: {_id: checkedImages}}} , function (err) {
+            if(err) throw err;
+            console.log("Remove operation successfully executed");
+        });
+        res.redirect(redirectUrlFormat);
+    }
 });
 
 
