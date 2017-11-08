@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 const ImagePost = db.ImagePost;
-const Image = db.Image;
 
 router.get('/image-posts', function (req, res) {
     /*
@@ -11,7 +10,6 @@ router.get('/image-posts', function (req, res) {
     display caption and the image itself.
      */
     ImagePost.find(function (err, imagePosts) {
-        console.log('finding all the image posts', imagePosts);
         res.render('imageposts', {imagePosts:imagePosts});
     });
 });
@@ -26,7 +24,6 @@ router.post('/process-post', function (req, res) {
     */
     const title = req.body.title;
     const imagePost = new ImagePost({title:title});
-    console.log("slug:",imagePost.title);
     const numOfImageUrls = (Object.keys(req.body).length - 1) / 2;
     console.log("Nubmer of image urls: ", numOfImageUrls);
     for(let imageUrlNumber = 1; imageUrlNumber <= numOfImageUrls; imageUrlNumber++) {
@@ -36,14 +33,35 @@ router.post('/process-post', function (req, res) {
                                     url: req.body['img'+imageUrlNumber+'url']});
         }
     }
-    console.log('ImagePost:', imagePost);
+    //console.log('ImagePost:', imagePost);
     imagePost.save(function (err, imagePost) {
-        if(err) {
-            console.log(err);
-        }
-        console.log("I am inside Image post save");
+        if(err) throw console.log(err);
         console.log("These are the images inside the image post:",imagePost);
         res.redirect('/image-posts');
+    });
+});
+
+router.get('/image-posts/:slug', function (req, res) {
+    const slugForImagePost = req.params['slug'];
+    ImagePost.findOne({slug: slugForImagePost}, function (err, anImagePost) {
+        if (err) throw err;
+        console.log("Image post requested:", anImagePost);
+        res.render('anImagePost', {anImagePost: anImagePost});
+    });
+});
+
+router.post('/process-an-image-post', function (req, res) {
+    const slugForImagePost = req.body['img-post-slug'];
+    const imageUrl = req.body['imgurl'];
+    const imageCaption = req.body['imgcaption'];
+    const redirectUrlFormat = '/image-posts/' + slugForImagePost;
+    console.log("Image post slug:",slugForImagePost);
+    console.log("Image url:",imageUrl);
+    console.log("Image post caption:",imageCaption);
+
+    ImagePost.findOneAndUpdate({slug:slugForImagePost}, {$push: {images: {caption:imageCaption, url:imageUrl}}}, function(err, anImagePost, count) {
+        console.log("This is updated:", anImagePost);
+        res.redirect(redirectUrlFormat);
     });
 });
 

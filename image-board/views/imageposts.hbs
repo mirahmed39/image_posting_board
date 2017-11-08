@@ -25,10 +25,11 @@
 </form>
 
 {{#each imagePosts as |anImagePost|}}
-    <li><a href="">{{anImagePost.title}}</a></li>
+    <li><a href="/image-posts/{{anImagePost.slug}}">{{anImagePost.title}}</a></li>
     {{#each anImagePost.images as |anImage|}}
         <figure>
             <figcaption>{{anImage.caption}}</figcaption>
+            <img src="{{anImage.url}}" class="img-fluid">
         </figure>
     {{/each}}
 {{/each}}

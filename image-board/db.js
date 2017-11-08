@@ -15,7 +15,7 @@ const ImagePostSchema = new Schema({
 });
 
 // slug plugin (schemaName.plugin(URLSlugs('property name')))
-ImageSchema.plugin(URLSlugs('caption'));
+//ImageSchema.plugin(URLSlugs('caption'));
 ImagePostSchema.plugin(URLSlugs('title'));
 
 // register the model
