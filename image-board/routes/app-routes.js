@@ -5,7 +5,15 @@ const ImagePost = db.ImagePost;
 const Image = db.Image;
 
 router.get('/image-posts', function (req, res) {
-    res.render('imageposts', {});
+    /*
+    Need to retrieve all the image posts from the database. and for each image post,
+    get the title and all the images, and the title should link to the slug, anf for each image
+    display caption and the image itself.
+     */
+    ImagePost.find(function (err, imagePosts) {
+        console.log('finding all the image posts', imagePosts);
+        res.render('imageposts', {imagePosts:imagePosts});
+    });
 });
 
 router.post('/process-post', function (req, res) {
@@ -18,20 +26,23 @@ router.post('/process-post', function (req, res) {
     */
     const title = req.body.title;
     const imagePost = new ImagePost({title:title});
+    console.log("slug:",imagePost.title);
     const numOfImageUrls = (Object.keys(req.body).length - 1) / 2;
+    console.log("Nubmer of image urls: ", numOfImageUrls);
     for(let imageUrlNumber = 1; imageUrlNumber <= numOfImageUrls; imageUrlNumber++) {
         if (req.body["img"+imageUrlNumber+"url"] !== '') {
-            const image = new Image({caption: req.body["img"+imageUrlNumber+"caption"],
-                                     url: req.body["img"+imageUrlNumber+"url"]});
-            image.save(function (err, image) {
-                if(err) throw err;
-                imagePost.images.push(image);
-            });
+            //console.log("Image url number: ", "img"+imageUrlNumber+"url");
+            imagePost.images.push({caption: req.body['img'+imageUrlNumber+'caption'],
+                                    url: req.body['img'+imageUrlNumber+'url']});
         }
     }
+    console.log('ImagePost:', imagePost);
     imagePost.save(function (err, imagePost) {
-        if(err) throw err;
-        console.log("This is an image post:",imagePost);
+        if(err) {
+            console.log(err);
+        }
+        console.log("I am inside Image post save");
+        console.log("These are the images inside the image post:",imagePost);
         res.redirect('/image-posts');
     });
 });
