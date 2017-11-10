@@ -13,8 +13,11 @@ router.get('/image-posts', function (req, res) {
     get the title and all the images, and the title should link to the slug, anf for each image
     display caption and the image itself.
      */
+    const errorMessage = req.session.errorMessage;
     ImagePost.find(function (err, imagePosts) {
-        res.render('imageposts', {imagePosts:imagePosts});
+        console.log("error message:", errorMessage);
+        res.render('imageposts', {imagePosts:imagePosts, error:errorMessage});
+        delete req.session.errorMessage;
     });
 });
 
@@ -37,9 +40,13 @@ router.post('/process-post', function (req, res) {
     }
     imagePost.save(function (err) {
         if(err) {
-            console.log("An error occured");
-            const errorMessage = "An Image Post must have a Title\n" +
-                "If you are inserting an image, the URL field for that image must be populated.";;
+            /*
+            creating an errorMessage property on session so that we can use it even after
+            the redirect.(note: redirect completely starts a new request and one way to
+            maintain state is to use session)
+             */
+            req.session.errorMessage = "An Image Post must have a Title\n" +
+                "If you are inserting an image, the URL field for that image must be populated.";
             res.redirect('/image-posts');
         } else
             res.redirect('/image-posts');
@@ -94,6 +101,5 @@ router.post('/remove-image', function (req, res) {
         res.redirect(redirectUrlFormat);
     }
 });
-
 
 module.exports = router;
